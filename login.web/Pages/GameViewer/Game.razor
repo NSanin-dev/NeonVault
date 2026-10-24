@@ -1,0 +1,58 @@
+@page "/dashboard/game/{gameId:int}"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<PageTitle>Game Profile</PageTitle>
+
+@{
+	var userCount = gameModel.UserNames?.Count ?? 0;
+	var gameTitle = string.IsNullOrWhiteSpace(gameModel.Title) ? "Untitled game" : gameModel.Title;
+}
+
+<div class="game-profile-page">
+	@if (!string.IsNullOrWhiteSpace(statusMessage))
+	{
+		<div class="game-profile-error" role="alert">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5m0 4h.01" /></svg>
+			<span>@statusMessage</span>
+		</div>
+	}
+	else
+	{
+		<section class="game-profile-card" aria-labelledby="game-title">
+			<div class="game-profile-art" aria-hidden="true">
+				<span class="game-art-label">COVER ART</span>
+				<div class="game-art-grid"></div>
+				@if (!string.IsNullOrWhiteSpace(gameModel.CoverArt))
+				{
+					<img src="@gameModel.CoverArt" alt="" class="game-cover-art" />
+				}
+				else
+				{
+					<img src="/images/game-controller.svg" alt="" class="game-cover-art game-cover-art-fallback" />
+				}
+				<span class="game-art-caption">GAME'S HEAVEN</span>
+			</div>
+
+			<div class="game-profile-content">
+				<p class="game-profile-kicker">IN THE LIBRARY</p>
+				<h1 id="game-title">@gameTitle</h1>
+
+				<div class="game-owner-count" aria-label="Owned by @userCount @(userCount == 1 ? "user" : "users")">
+					<span class="owner-icon" aria-hidden="true">
+						<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3" /><path d="M3.5 19v-1.2a5.5 5.5 0 0 1 11 0V19z" /><path d="M16 5.5a3 3 0 0 1 0 5.8m1.2 2.2a4.5 4.5 0 0 1 3.3 4.3V19h-3" /></svg>
+					</span>
+					<span class="owner-count-copy">
+						<span>OWNED BY</span>
+						<strong>@userCount @(userCount == 1 ? "user" : "users")</strong>
+					</span>
+				</div>
+
+				@if (!UserOwnsGame)
+				{
+					<button class="game-buy-button" type="button" @onclick="CreateCheckoutAsync">Buy Game</button>
+				}
+			</div>
+		</section>
+	}
+</div>

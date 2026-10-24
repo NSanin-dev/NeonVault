@@ -1,0 +1,68 @@
+@using login.web.Models;
+@page "/register"
+@layout AuthLayout
+
+
+<PageTitle>Register</PageTitle>
+
+<div class="page-container">
+
+    <EditForm Model="registerModel" OnValidSubmit="RegisterAsync" class="register-form">
+        <DataAnnotationsValidator />
+
+        <h1>Create your profile</h1>
+
+        <div class="profile-section">
+            <h2>Profile picture</h2>
+            <button type="button" class="profile-space" @onclick="ChangeBool" aria-label="@(hasClicked ? "Hide profile picture options" : "Show profile picture options")">
+                @if (string.IsNullOrWhiteSpace(registerModel.ProfilePicture))
+                {
+                    <span class="profile-placeholder">U</span>
+                }
+                else
+                {
+                    <img src="@registerModel.ProfilePicture" alt="Selected profile picture" />
+                }
+            </button>
+            <p class="profile-hint">Click your avatar to choose a picture</p>
+        </div>
+
+        @if(hasClicked)
+        {
+            <div class="input-box profile-picker">
+                <label for="profile-picture">Choose a profile picture</label>
+                <select id="profile-picture" @bind="registerModel.ProfilePicture">
+                    <option value="">Select an avatar</option>
+                    <option value="/images/images.jpeg">Spooder-Man</option>
+                    <option value="/images/sonic.jpg">Sanic</option>
+                </select>
+            </div>
+        }
+
+        <div class="input-box">
+            <label for="username">Username</label>
+            <input id="username" type="text" placeholder="Choose a username" @bind="registerModel.UserName"/>
+            <ValidationMessage For="@(() => registerModel.UserName)" class="validation-error" />
+        </div>
+
+        <div class="input-box">
+            <label for="password">Password</label>
+            <input id="password" type="password" placeholder="Create a password" @bind="registerModel.PassWord"/>
+            <ValidationMessage For="@(() => registerModel.PassWord)" class="validation-error"/>
+        </div>
+
+        <div class="input-box">
+            <label for="confirm-password">Confirm password</label>
+            <input id="confirm-password" type="password" placeholder="Re-type your password" @bind="registerModel.ConfirmPassword"/>
+            <ValidationMessage For="@(() => registerModel.ConfirmPassword)" class="validation-error"/>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(statusMessage))
+        {
+            <div class="status-message" role="alert">@statusMessage</div>
+        }
+
+        <button type="submit" class="submit-button">Create account</button>
+    </EditForm>
+</div>
+

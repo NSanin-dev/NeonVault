@@ -1,0 +1,91 @@
+@page "/dashboard/profile"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<PageTitle>Your Profile</PageTitle>
+
+<div class="profile-page">
+	<header class="profile-heading">
+		<div>
+			<p class="profile-kicker">ACCOUNT OVERVIEW</p>
+			<h1>Your Profile</h1>
+			<p class="profile-intro">Your player details and game library.</p>
+		</div>
+		<div class="profile-id-badge">
+			<span>USER ID</span>
+			<strong>#@userId</strong>
+		</div>
+	</header>
+
+	@if (!string.IsNullOrWhiteSpace(statusMessage))
+	{
+		<div class="profile-error" role="alert">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5m0 4h.01" /></svg>
+			<span>@statusMessage</span>
+		</div>
+	}
+
+	<section class="profile-overview" aria-label="Profile details">
+		<div class="profile-avatar-panel">
+			@if (!string.IsNullOrWhiteSpace(profileModel.ProfilePicture))
+			{
+				<img class="profile-large-avatar" src="@profileModel.ProfilePicture" alt="Profile picture for @profileModel.UserName" />
+			}
+			else
+			{
+				<span class="profile-large-avatar profile-default-avatar" aria-hidden="true">U</span>
+			}
+			<span class="avatar-caption">PLAYER PROFILE</span>
+		</div>
+
+		<dl class="profile-details">
+			<div class="profile-detail">
+				<dt>Username</dt>
+				<dd>@profileModel.UserName</dd>
+			</div>
+			<div class="profile-detail">
+				<dt>Role</dt>
+				<dd>@profileModel.Role</dd>
+			</div>
+			<div class="profile-detail profile-detail-id">
+				<dt>User ID</dt>
+				<dd>#@userId</dd>
+			</div>
+		</dl>
+	</section>
+
+	<section class="games-section" aria-labelledby="games-title">
+		<header class="games-heading">
+			<div>
+				<p class="profile-kicker">YOUR COLLECTION</p>
+				<h2 id="games-title">User's Games</h2>
+			</div>
+			<span class="games-count">@(profileModel.Games?.Count ?? 0) games</span>
+		</header>
+
+		@if (profileModel.GamesCoverArt is { Count: > 0 }
+			&& profileModel.GamesCoverArt.Any(coverArt => !string.IsNullOrWhiteSpace(coverArt)))
+		{
+			<ul class="games-cover-grid" aria-label="Owned game covers">
+				@for (var index = 0; index < profileModel.GamesCoverArt.Count; index++)
+				{
+					var coverArt = profileModel.GamesCoverArt[index];
+					if (!string.IsNullOrWhiteSpace(coverArt))
+					{
+						var gameTitle = profileModel.Games?.ElementAtOrDefault(index) ?? $"Game {index + 1}";
+
+						<li class="game-cover">
+							<img src="@coverArt" alt="@($"{gameTitle} cover")" loading="lazy" />
+						</li>
+					}
+				}
+			</ul>
+		}
+		else
+		{
+			<div class="games-empty" role="status">No games added yet.</div>
+		}
+	</section>
+</div>
+
+

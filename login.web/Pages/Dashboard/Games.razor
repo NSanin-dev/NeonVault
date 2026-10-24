@@ -1,0 +1,103 @@
+@page "/dashboard/games"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<PageTitle>Games</PageTitle>
+
+<div class="games-page">
+	<header class="games-page-heading">
+		<div>
+			<p class="games-kicker">GAME LIBRARY</p>
+			<h1>Games</h1>
+			<p class="games-intro">Explore the titles in the Game's Heaven collection.</p>
+		</div>
+		<div class="games-heading-actions">
+			@if (currentGames.Count > 0)
+			{
+				<span class="games-total">@currentGames.Count @(currentGames.Count == 1 ? "game" : "games")</span>
+			}
+			<AuthorizeView Roles="Admin">
+				<button class="admin-button" type="button" aria-expanded="@isVisible" aria-controls="game-creator" @onclick="ToggleAdminButton">@(isVisible ? "Close form" : "Add new game")</button>
+			</AuthorizeView>
+		</div>
+	</header>
+
+	<AuthorizeView Roles="Admin" Context="authContext">
+		@if (isVisible)
+		{
+			<section class="game-creator" id="game-creator" aria-labelledby="game-creator-title">
+				<div class="game-creator-heading">
+					<p class="game-creator-kicker">ADMIN TOOLS</p>
+					<h2 id="game-creator-title">Add a game</h2>
+					<p>Add a title to the platform's game library.</p>
+				</div>
+				<EditForm Model="gameModelAdmin" OnValidSubmit="CreateGameAsync" class="game-creator-form">
+					<DataAnnotationsValidator />
+
+					<div class="game-title-field">
+						<label for="new-game-title">Game title</label>
+						<InputText id="new-game-title" placeholder="e.g. Stardew Valley" @bind-Value="gameModelAdmin.GameTitle" />
+						<ValidationMessage For="@(() => gameModelAdmin.GameTitle)" class="validation-error" />
+					</div>
+
+					<button class="game-create-button" type="submit">Create game</button>
+					@if (!string.IsNullOrWhiteSpace(adminStatusMessage))
+					{
+						<p class="game-admin-status" role="status">@adminStatusMessage</p>
+					}
+				</EditForm>
+			</section>
+		}
+	</AuthorizeView>
+
+	@if (!string.IsNullOrWhiteSpace(statusMessage))
+	{
+		<div class="games-error" role="alert">
+			<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5m0 4h.01" /></svg>
+			<span>@statusMessage</span>
+		</div>
+	}
+	else if (currentGames.Count == 0)
+	{
+		<div class="games-empty" role="status">
+			<span class="games-empty-icon" aria-hidden="true">
+				<svg viewBox="0 0 24 24"><path d="M6.5 9.2h11a3.8 3.8 0 0 1 3.6 4.9l-1.1 3.5a2 2 0 0 1-3.2 1l-2.3-1.8h-5l-2.3 1.8a2 2 0 0 1-3.2-1l-1.1-3.5a3.8 3.8 0 0 1 3.6-4.9Z" /><path d="M8 11.5v4m-2-2h4m7-1h.01m2 2h.01" /></svg>
+			</span>
+			<h2>There are no games yet</h2>
+			<p>Games added to the collection will appear here.</p>
+		</div>
+	}
+	else
+	{
+		<section class="games-list" aria-label="Available games">
+			<div class="games-list-heading">
+				<span>TITLE</span>
+				<span>OWNERS</span>
+				<span class="game-id-heading">GAME ID</span>
+			</div>
+
+			@foreach (var game in currentGames)
+			{
+				var userCount = game.UserNames?.Count ?? 0;
+
+				<button class="game-row" type="button" @onclick="() => GoToGame(game.Id)" @key="game.Id">
+					<span class="game-title-cell">
+						<span class="game-mark" aria-hidden="true">
+							@if (!string.IsNullOrWhiteSpace(game.CoverArt))
+							{
+								<img src="@game.CoverArt" alt="" class="game-mark-cover" />
+							}
+							else
+							{
+								<svg viewBox="0 0 24 24"><path d="M6.5 9.2h11a3.8 3.8 0 0 1 3.6 4.9l-1.1 3.5a2 2 0 0 1-3.2 1l-2.3-1.8h-5l-2.3 1.8a2 2 0 0 1-3.2-1l-1.1-3.5a3.8 3.8 0 0 1 3.6-4.9Z" /><path d="M8 11.5v4m-2-2h4m7-1h.01m2 2h.01" /></svg>
+							}
+						</span>
+						<span class="game-title">@game.Title</span>
+					</span>
+					<span class="game-owners">Owned by @userCount @(userCount == 1 ? "user" : "users")</span>
+					<span class="game-id">#@game.Id</span>
+				</button>
+			}
+		</section>
+	}
+</div>

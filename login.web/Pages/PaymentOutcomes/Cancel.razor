@@ -1,0 +1,16 @@
+@page "/dashboard/cancel"
+@inject NavigationManager NavManager
+
+
+
+<PageTitle>Payment Cancelled</PageTitle>
+
+
+
+@code
+{
+    protected override void OnInitialized()
+    {
+        NavManager.NavigateTo("/dashboard", replace: true);
+    }
+}

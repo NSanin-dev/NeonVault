@@ -1,0 +1,43 @@
+@page "/dashboard"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<PageTitle>Dashboard</PageTitle>
+
+<div class="dashboard-page">
+	<header class="dashboard-heading">
+		<p class="section-kicker">PLAYER OVERVIEW</p>
+		<h1>Home</h1>
+		<p class="section-description">Your space for everything you play.</p>
+	</header>
+
+	<section class="welcome-panel" aria-labelledby="welcome-title">
+		<div class="welcome-copy">
+			<div class="welcome-tag">
+				<span class="tag-mark" aria-hidden="true"></span>
+				GAME'S HEAVEN
+			</div>
+			<h2 id="welcome-title">
+				Welcome back,<br />
+				<span>User</span>
+			</h2>
+			<p class="welcome-description">
+				Your gaming hub is ready. Make yourself at home and get set for your next adventure.
+			</p>
+			<div class="hub-status">
+				<span class="status-dot" aria-hidden="true"></span>
+				<span>YOUR HUB IS READY</span>
+			</div>
+		</div>
+
+		<div class="welcome-visual" aria-hidden="true">
+			<div class="visual-label">
+				<span>PLAYER SPACE</span>
+				<span>GH / 01</span>
+			</div>
+			<div class="visual-grid"></div>
+			<img class="controller-art" src="/images/game-controller.svg" alt="" />
+			<span class="visual-caption">PLAY YOUR WAY</span>
+		</div>
+	</section>
+</div>

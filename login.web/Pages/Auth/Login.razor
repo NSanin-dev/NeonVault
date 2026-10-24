@@ -1,0 +1,36 @@
+﻿@page "/login"
+@layout AuthLayout
+
+<PageTitle>Login</PageTitle>
+
+<div class="page-container">
+    <main class="login-card">
+        <EditForm OnValidSubmit="LoginAsync" Model="loginModel">
+            <DataAnnotationsValidator/>
+            <h1>Welcome back</h1>
+
+            <div class="input-box">
+                <label for="username">Username</label>
+                <input id="username" type="text" placeholder="Enter your username" @bind="loginModel.UserName" />
+                <ValidationMessage For="@(() => loginModel.UserName)" class="validation-error"/>
+            </div>
+
+            <div class="input-box">
+                <label for="password">Password</label>
+                <input id="password" type="password" placeholder="Enter your password" @bind="loginModel.PassWord" />
+                <ValidationMessage For="@(() => loginModel.PassWord)" class="validation-error"/>
+            </div>
+
+            <div class="register-link">
+                <span>Don't have an account?</span>
+                <a href="/register">Create an account</a>
+            </div>
+
+            <div class="status-message">
+                <span>@status</span>
+            </div>
+
+            <button class="button" type="submit">Login</button>
+        </EditForm>
+    </main>
+</div>
